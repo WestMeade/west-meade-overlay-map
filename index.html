@@ -43,9 +43,171 @@
             margin: 0;
         }
         </style>
-        <title></title>
+        <title>West Meade Environmental Overlay District GIS Map</title>
+
+        <style>
+        :root {
+            --wm-sidebar-width: 360px;
+            --wm-panel-bg: rgba(255,255,255,0.96);
+            --wm-border: #c8c8c8;
+            --wm-text: #222;
+            --wm-muted: #5f5f5f;
+        }
+        #wm-sidebar {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            z-index: 2000;
+            width: var(--wm-sidebar-width);
+            max-height: calc(100% - 28px);
+            overflow-y: auto;
+            box-sizing: border-box;
+            background: var(--wm-panel-bg);
+            border: 1px solid var(--wm-border);
+            box-shadow: 0 2px 10px rgba(0,0,0,.22);
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--wm-text);
+        }
+        #wm-sidebar-header {
+            padding: 16px 44px 12px 16px;
+            border-bottom: 1px solid #d8d8d8;
+            position: relative;
+        }
+        #wm-sidebar h1 {
+            margin: 0 0 4px 0;
+            font-size: 22px;
+            line-height: 1.15;
+            font-weight: 700;
+        }
+        #wm-sidebar .wm-subtitle {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.35;
+            color: #404040;
+            font-weight: 600;
+        }
+        #wm-sidebar .wm-date {
+            margin-top: 7px;
+            font-size: 12px;
+            color: var(--wm-muted);
+        }
+        #wm-sidebar-body {
+            padding: 14px 16px 16px 16px;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+        #wm-sidebar-body p { margin: 0 0 12px 0; }
+        #wm-sidebar-body h2 {
+            margin: 15px 0 6px 0;
+            font-size: 14px;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+        #wm-sidebar-body ul {
+            margin: 6px 0 12px 20px;
+            padding: 0;
+        }
+        #wm-sidebar-body li { margin: 0 0 5px 0; }
+        #wm-sidebar .wm-note {
+            border-top: 1px solid #ddd;
+            margin-top: 12px;
+            padding-top: 11px;
+            color: var(--wm-muted);
+            font-size: 11.5px;
+        }
+        #wm-sidebar-toggle {
+            position: absolute;
+            top: 9px;
+            right: 9px;
+            width: 30px;
+            height: 30px;
+            border: 1px solid #bbb;
+            background: #f8f8f8;
+            color: #333;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 26px;
+            padding: 0;
+        }
+        #wm-sidebar.collapsed {
+            width: 46px;
+            height: 46px;
+            overflow: hidden;
+        }
+        #wm-sidebar.collapsed #wm-sidebar-header {
+            padding: 0;
+            border: 0;
+            height: 44px;
+        }
+        #wm-sidebar.collapsed #wm-sidebar-header > :not(#wm-sidebar-toggle),
+        #wm-sidebar.collapsed #wm-sidebar-body {
+            display: none;
+        }
+        #wm-sidebar.collapsed #wm-sidebar-toggle {
+            top: 7px;
+            right: 7px;
+        }
+        @media (max-width: 700px) {
+            #wm-sidebar {
+                width: min(88vw, 340px);
+                top: 8px;
+                left: 8px;
+                max-height: calc(100% - 16px);
+            }
+            #wm-sidebar h1 { font-size: 19px; }
+        }
+        </style>
+
     </head>
     <body>
+
+        <aside id="wm-sidebar" aria-label="Map information">
+            <div id="wm-sidebar-header">
+                <button id="wm-sidebar-toggle" type="button" aria-label="Collapse map information" title="Collapse">−</button>
+                <h1>West Meade Environmental Overlay District</h1>
+                <p class="wm-subtitle">Official GIS Map</p>
+                <div class="wm-date">Map version: August 13, 2026</div>
+            </div>
+            <div id="wm-sidebar-body">
+                <p>
+                    This interactive GIS map identifies the parcels, environmental features,
+                    terrain conditions, and geologic information used to define and evaluate
+                    the West Meade Environmental Overlay District.
+                </p>
+
+                <h2>About the map</h2>
+                <p>
+                    The map shows the geographic relationship between the Overlay District
+                    and the natural features it is designed to protect, including steep slopes,
+                    ridgelines, tree canopy, problem soils, documented landslide areas,
+                    elevation contours, and bedrock geologic boundaries.
+                </p>
+
+                <h2>Using the map</h2>
+                <ul>
+                    <li>Use the layer control to turn individual map layers on or off.</li>
+                    <li>Click mapped features and parcels to view available attribute information.</li>
+                    <li>Zoom in for parcel-level detail and out to view the broader hillside system.</li>
+                    <li>NOTE: Parcels in blue have been identified as being included in the West Meade Environmental Overlay District.</li>
+                </ul>
+
+                <h2>Data sources</h2>
+                <p>
+                    Map layers incorporate publicly available geographic information from
+                    Metro Nashville, state and federal geologic and environmental sources,
+                    and project-specific GIS analysis prepared for the West Meade
+                    Environmental Overlay District.
+                </p>
+
+                <div class="wm-note">
+                    <strong>Map note:</strong> This GIS map is a visual reference to the
+                    Overlay District and its supporting environmental data. Where a legal
+                    description, adopted ordinance, parcel record, or other controlling
+                    document differs from the map display, the controlling official record governs.
+                </div>
+            </div>
+        </aside>
+
         <div id="map">
             <div id="popup" class="ol-popup">
                 <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -58,11 +220,26 @@
         <script src="./resources/ol-layerswitcher.js"></script>
         <script src="resources/photon-geocoder-autocomplete.min.js"></script>
         <script src="resources/olms.js"></script>
-        <script src="layers/Contours_1.js"></script><script src="layers/TreeCanopy_2.js"></script><script src="layers/West_Meade_Overlay_Parcels_Flagged_5.js"></script>
-        <script src="styles/Contours_1_style.js"></script><script src="styles/TreeCanopy_2_style.js"></script><script src="styles/West_Meade_Overlay_Parcels_Flagged_5_style.js"></script>
+        <script src="layers/TreeCanopy_2.js"></script><script src="layers/ElevationContours_3.js"></script><script src="layers/ProblemSoilAreas_4.js"></script><script src="layers/WestMeadeLandslideRegions2010_5.js"></script><script src="layers/WestMeadeSteepSlopes_6.js"></script><script src="layers/LandslidesMay2010_7.js"></script><script src="layers/LandslidesMarch1975_8.js"></script><script src="layers/WestMeadeOverlayParcelsIncluded_9.js"></script><script src="layers/BedrockFormationBoundaries2023_11.js"></script><script src="layers/West_Meade_Frame_12.js"></script><script src="layers/West_Meade_Clip_Boundary_13.js"></script>
+        <script src="styles/TreeCanopy_2_style.js"></script><script src="styles/ElevationContours_3_style.js"></script><script src="styles/ProblemSoilAreas_4_style.js"></script><script src="styles/WestMeadeLandslideRegions2010_5_style.js"></script><script src="styles/WestMeadeSteepSlopes_6_style.js"></script><script src="styles/LandslidesMay2010_7_style.js"></script><script src="styles/LandslidesMarch1975_8_style.js"></script><script src="styles/WestMeadeOverlayParcelsIncluded_9_style.js"></script><script src="styles/BedrockFormationBoundaries2023_11_style.js"></script><script src="styles/West_Meade_Frame_12_style.js"></script><script src="styles/West_Meade_Clip_Boundary_13_style.js"></script>
         <script src="./layers/layers.js" type="text/javascript"></script> 
         <script src="./resources/Autolinker.min.js"></script>
-        <script src="./resources/qgis2web.js"></script>
-        <script src="js/west-meade-overlay-collector.js"></script>   
+        <script src="./resources/qgis2web.js"></script>        
+
+        <script>
+        (function () {
+            var sidebar = document.getElementById('wm-sidebar');
+            var toggle = document.getElementById('wm-sidebar-toggle');
+            if (!sidebar || !toggle) return;
+            toggle.addEventListener('click', function () {
+                var collapsed = sidebar.classList.toggle('collapsed');
+                toggle.textContent = collapsed ? '+' : '−';
+                toggle.title = collapsed ? 'Show map information' : 'Collapse';
+                toggle.setAttribute('aria-label',
+                    collapsed ? 'Show map information' : 'Collapse map information');
+            });
+        })();
+        </script>
+
     </body>
 </html>
