@@ -1150,3 +1150,189 @@ document.addEventListener('DOMContentLoaded', function() {
     if (attributionControl) {
         bottomRightContainerDiv.appendChild(attributionControl);
     }
+
+
+
+// ------------------------------------------------------------
+// West Meade Parcel Address Search
+// Searches PropAddr in WestMeadeOverlayParcelsIncluded_9
+// ------------------------------------------------------------
+(function () {
+
+    function normalizeAddress(value) {
+        return String(value || '')
+            .toUpperCase()
+            .replace(/[.,#]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    // Search container
+    var searchDiv = document.createElement('div');
+    searchDiv.className = 'ol-control';
+    searchDiv.style.position = 'absolute';
+    searchDiv.style.top = '10px';
+    searchDiv.style.left = '390px';
+    searchDiv.style.background = 'rgba(255,255,255,0.95)';
+    searchDiv.style.padding = '6px';
+    searchDiv.style.borderRadius = '3px';
+    searchDiv.style.boxShadow = '0 1px 5px rgba(0,0,0,0.3)';
+    searchDiv.style.display = 'flex';
+    searchDiv.style.gap = '4px';
+    searchDiv.style.alignItems = 'center';
+
+/*
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Search address...';
+    input.style.width = '210px';
+    input.style.padding = '6px 8px';
+    input.style.border = '1px solid #aaa';
+    input.style.fontSize = '14px';
+
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.innerHTML = 'Search';
+    button.style.padding = '6px 10px';
+    button.style.cursor = 'pointer';
+*/
+
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Search address...';
+    input.style.width = '230px';
+    input.style.height = '32px';
+    input.style.boxSizing = 'border-box';
+    input.style.padding = '6px 8px';
+    input.style.border = '1px solid #aaa';
+    input.style.fontSize = '14px';
+
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.innerHTML = 'Search';
+    button.style.padding = '6px 12px';
+    button.style.minWidth = '70px';
+    button.style.width = 'auto';
+    button.style.height = '32px';
+    button.style.whiteSpace = 'nowrap';
+    button.style.fontSize = '14px';
+    button.style.fontWeight = '600';
+    button.style.lineHeight = '18px';
+    button.style.cursor = 'pointer';
+    
+    searchDiv.appendChild(input);
+    searchDiv.appendChild(button);
+
+    var searchControl = new ol.control.Control({
+        element: searchDiv
+    });
+
+    map.addControl(searchControl);
+
+    // Temporary highlight
+    var highlightSource = new ol.source.Vector();
+
+    var highlightLayer = new ol.layer.Vector({
+        source: highlightSource,
+        style: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: 'rgba(0,0,0,1)',
+                width: 4
+            }),
+            fill: new ol.style.Fill({
+                color: 'rgba(255,255,0,0.25)'
+            })
+        })
+    });
+
+    highlightLayer.setZIndex(1000);
+    map.addLayer(highlightLayer);
+
+    function searchAddress() {
+
+        var searchValue = normalizeAddress(input.value);
+
+        if (!searchValue) {
+            return;
+        }
+
+        var source = lyr_WestMeadeOverlayParcelsIncluded_9.getSource();
+        var features = source.getFeatures();
+
+        var exactMatches = [];
+        var partialMatches = [];
+
+        features.forEach(function(feature) {
+
+            var propAddr = feature.get('PropAddr');
+
+            if (!propAddr) {
+                return;
+            }
+
+            var normalized = normalizeAddress(propAddr);
+
+            if (normalized === searchValue) {
+                exactMatches.push(feature);
+            }
+            else if (normalized.indexOf(searchValue) !== -1) {
+                partialMatches.push(feature);
+            }
+        });
+
+        var matches =
+            exactMatches.length > 0
+                ? exactMatches
+                : partialMatches;
+
+        if (matches.length === 0) {
+            alert('Address not found: ' + input.value);
+            return;
+        }
+
+        highlightSource.clear();
+
+        matches.forEach(function(feature) {
+            highlightSource.addFeature(feature.clone());
+        });
+
+        var extent = ol.extent.createEmpty();
+
+        matches.forEach(function(feature) {
+            ol.extent.extend(
+                extent,
+                feature.getGeometry().getExtent()
+            );
+        });
+/*
+        map.getView().fit(extent, {
+            padding: [80, 80, 80, 80],
+            duration: 700,
+            maxZoom: 18
+        });
+*/
+        map.getView().fit(extent, {
+            padding: [80, 80, 80, 80],
+            duration: 700,
+            maxZoom: 20
+        });
+
+        setTimeout(function () {
+            map.getView().setZoom(map.getView().getZoom() + 1);
+        }, 750);
+
+        
+    }
+
+    button.addEventListener('click', searchAddress);
+
+    input.addEventListener('keydown', function(evt) {
+        if (evt.key === 'Enter') {
+            searchAddress();
+        }
+    });
+
+})();
+
+
+
