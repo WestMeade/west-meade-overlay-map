@@ -180,9 +180,21 @@ function createPopupField(currentFeature, currentFeatureKeys, layer) {
                 layer.get('fieldLabels')[currentFeatureKeys[i]] == "header label - visible with data") {
                 popupField += '<strong>' + layer.get('fieldAliases')[currentFeatureKeys[i]] + '</strong><br />';
             }
+
+
+            // Display WestMeadeOverlay boolean as Yes/No in popup
+            var displayValue = currentFeature.get(currentFeatureKeys[i]);
+
+            if (currentFeatureKeys[i] === 'WestMeadeOverlay') {
+                displayValue = (displayValue == 1) ? 'Yes' : 'No';
+            }
+
+
+
             if (layer.get('fieldImages')[currentFeatureKeys[i]] != "ExternalResource") {
-				popupField += (currentFeature.get(currentFeatureKeys[i]) != null ? autolinker.link(currentFeature.get(currentFeatureKeys[i]).toLocaleString()) + '</td>' : '');
-			} else {
+				//popupField += (currentFeature.get(currentFeatureKeys[i]) != null ? autolinker.link(currentFeature.get(currentFeatureKeys[i]).toLocaleString()) + '</td>' : '');
+			     popupField += (displayValue != null ? autolinker.link(displayValue.toLocaleString()) + '' : '');
+            } else {
 				var fieldValue = currentFeature.get(currentFeatureKeys[i]);
 				if (/\.(gif|jpg|jpeg|tif|tiff|png|avif|webp|svg)$/i.test(fieldValue)) {
 					popupField += (fieldValue != null ? '<img src="images/' + fieldValue.replace(/[\\\/:]/g, '_').trim() + '" /></td>' : '');
