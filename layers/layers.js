@@ -24,7 +24,8 @@ var lyr_WestMeadeHillshades_1 = new ol.layer.Image({
             attributions: ' ',
             projection: 'EPSG:3857',
             alwaysInRange: true,
-            imageExtent: [-9676300.882646, 4312342.753007, -9669934.219866, 4318898.685146]
+        //    imageExtent: [-9676300.882646, 4312342.753007, -9669934.219866, 4318898.685146]
+            imageExtent: [-9677514.986453, 4311734.852541, -9671799.683558, 4318600.187176] 
         })
     });
 var format_TreeCanopy_2 = new ol.format.GeoJSON();
